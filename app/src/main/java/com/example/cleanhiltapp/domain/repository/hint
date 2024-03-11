@@ -1,0 +1,3 @@
+domain layer repository
+only defines the interfaces without having any direct access or anything
+it is useful for testing
