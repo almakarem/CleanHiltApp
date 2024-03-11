@@ -4,9 +4,9 @@ import android.net.http.HttpException
 import android.os.Build
 import androidx.annotation.RequiresExtension
 import com.example.cleanhiltapp.common.Resource
+import com.example.cleanhiltapp.data.remote.data_transfer_object.GeneratedAnswerDto
 import com.example.cleanhiltapp.data.remote.data_transfer_object.toCoin
 import com.example.cleanhiltapp.data.remote.data_transfer_object.toCoinDetail
-import com.example.cleanhiltapp.data.remote.data_transfer_object.toGeneratedAnswer
 import com.example.cleanhiltapp.domain.model.ChatRequestBody
 import com.example.cleanhiltapp.domain.model.Coin
 import com.example.cleanhiltapp.domain.model.CoinDetail
@@ -23,10 +23,10 @@ class GetChatResponseUseCase @Inject constructor(
     private val repository: ChatRepository
 ) {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    operator fun invoke(body: ChatRequestBody): Flow<Resource<GeneratedAnswer>> = flow {
+    operator fun invoke(body: ChatRequestBody): Flow<Resource<GeneratedAnswerDto>> = flow {
         try {
             emit(Resource.Loading())
-            val response = repository.getPrompt(body).toGeneratedAnswer()
+            val response = repository.getPrompt(body)
             emit(Resource.Success(response))
         }catch (e: HttpException){
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occured."))

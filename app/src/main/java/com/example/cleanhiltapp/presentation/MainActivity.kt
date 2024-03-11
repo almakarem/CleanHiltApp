@@ -24,6 +24,7 @@ import com.example.cleanhiltapp.R
 import com.example.cleanhiltapp.common.Resource
 import com.example.cleanhiltapp.databinding.ActivityMainBinding
 import com.example.cleanhiltapp.domain.model.ChatRequestBody
+import com.example.cleanhiltapp.domain.model.Message
 import com.example.cleanhiltapp.presentation.ChatGPTResponse.ChatGPTViewModel
 import com.example.cleanhiltapp.presentation.ui.theme.CleanHiltAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,46 +46,87 @@ class MainActivity : ComponentActivity() {
         binding.idEdtQuery.setOnEditorActionListener(TextView.OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 binding.idTVResponse.text = "Please wait.."
-                if (binding.idEdtQuery.text.toString().isNotEmpty()) {
-                    val requestBody = ChatRequestBody("text-davinci-003",binding.idEdtQuery.text.toString(),100,
-                        0f, 1f,0, 0, "\n")
+                val queryText = binding.idEdtQuery.text.toString()
+                binding.idTVQuestion.text = queryText
+                    if (queryText.isNotEmpty()) {
+                    // Create a message to send
+                    val userMessage = Message("user", queryText)
+                    // Prepare the request body with the model, messages, and any other parameters
+                    val requestBody = ChatRequestBody(
+                        model = "gpt-3.5-turbo",
+                        messages = listOf(userMessage),
+                        temperature = 0.7f,
+                        max_tokens = 100,
+                        top_p = 1.0f,
+                        frequency_penalty = 0.0f,
+                        presence_penalty = 0.0f
+                    )
+
                     try {
                         viewModel.sendMessage(requestBody)
                     } catch (e: HttpException) {
-                        // Handle the exception, e.g., log it or display an error message
+                        // Handle the HttpException, e.g., log it or display an error message
                         Log.e("RetrofitError", "HttpException: ${e.message}")
                     } catch (e: Exception) {
                         // Handle any other exceptions
                         Log.e("RetrofitError", "Exception: ${e.message}")
                     }
 
-
                 } else {
-                    Toast.makeText(this, "Please enter your query..", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, "Please enter your query..", Toast.LENGTH_SHORT).show()
                 }
                 return@OnEditorActionListener true
             }
             false
         })
 
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.chatResponse.collect { resource ->
+//                when (resource) {
+//                    is Resource.Loading -> {
+//                        // Show loading indicator
+//                    }
+//                    is Resource.Success -> {
+//                        // Update UI with the successful response
+//                        val data = resource.data
+//                        if (data !== null){
+//                            binding.idTVResponse.text = binding.idEdtQuery.text.toString() + data.response.get(0).toString()
+//                        }
+//                        else
+//                            binding.idTVResponse.text = binding.idEdtQuery.text.toString()
+//                    }
+//                    is Resource.Error -> {
+//                        // Show error message
+//                        Toast.makeText(this@MainActivity, resource.message, Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//        }
         lifecycleScope.launchWhenStarted {
             viewModel.chatResponse.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
                         // Show loading indicator
+                        binding.idTVResponse.text = "Loading..."
                     }
                     is Resource.Success -> {
                         // Update UI with the successful response
                         val data = resource.data
-                        if (data !== null){
-                            binding.idTVResponse.text = binding.idEdtQuery.text.toString() + data.response.get(0).toString()
+                        if (data != null && data.choices.isNotEmpty()) {
+                            println(data.toString())
+                            println(data.choices.toString())
+                            // Assuming 'data.responses' is a list of messages returned by the API
+                            // Concatenate all messages for display, or display the last message, based on your preference
+                            val lastMessage = data.choices.last() // Assuming each response has a 'content' field
+                            binding.idTVResponse.setText(lastMessage.message.content)
+                            binding.idEdtQuery.setText("")
+                        } else {
+                            binding.idTVResponse.text = "No response received."
                         }
-                        else
-                            binding.idTVResponse.text = binding.idEdtQuery.text.toString()
                     }
                     is Resource.Error -> {
                         // Show error message
-                        Toast.makeText(this@MainActivity, resource.message, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@MainActivity, resource.message ?: "An error occurred", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

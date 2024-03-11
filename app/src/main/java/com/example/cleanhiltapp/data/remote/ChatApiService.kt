@@ -10,7 +10,7 @@ import retrofit2.http.POST
 
 interface ChatApiService {
 
-    @POST("completions")
+    @POST("v1/chat/completions")
     suspend fun getPrompt(@Body body: ChatRequestBody) : GeneratedAnswerDto
 
 }

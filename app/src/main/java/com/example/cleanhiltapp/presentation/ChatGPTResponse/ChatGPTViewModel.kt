@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanhiltapp.common.Resource
+import com.example.cleanhiltapp.data.remote.data_transfer_object.GeneratedAnswerDto
 import com.example.cleanhiltapp.domain.model.ChatRequestBody
 import com.example.cleanhiltapp.domain.model.GeneratedAnswer
 import com.example.cleanhiltapp.domain.use_case.get_response.GetChatResponseUseCase
@@ -25,15 +26,8 @@ class ChatGPTViewModel @Inject constructor(
 ) : ViewModel() {
 
     // StateFlow approach
-    private val _chatResponse = MutableStateFlow<Resource<GeneratedAnswer>>(Resource.Loading())
-    val chatResponse: StateFlow<Resource<GeneratedAnswer>> = _chatResponse.asStateFlow()
-
-    // Alternatively, using LiveData
-    // val chatResponse: LiveData<Resource<GeneratedAnswer>> = liveData {
-    //     getChatResponseUseCase(body).collect {
-    //         emit(it)
-    //     }
-    // }
+    private val _chatResponse = MutableStateFlow<Resource<GeneratedAnswerDto>>(Resource.Loading())
+    val chatResponse: StateFlow<Resource<GeneratedAnswerDto>> = _chatResponse.asStateFlow()
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun sendMessage(body: ChatRequestBody) {

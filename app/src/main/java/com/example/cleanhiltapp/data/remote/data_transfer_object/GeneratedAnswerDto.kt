@@ -12,11 +12,3 @@ data class GeneratedAnswerDto(
     val usage: Usage
 )
 
-fun GeneratedAnswerDto.toGeneratedAnswer(): GeneratedAnswer {
-
-    return GeneratedAnswer(
-        response = choices.map { it.text },
-        id = id,
-        created = created)
-
-}

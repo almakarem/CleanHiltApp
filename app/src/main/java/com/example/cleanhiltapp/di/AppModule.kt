@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -37,25 +38,35 @@ object AppModule {
         return CoinRepositoryImpl(api)
     }
 
-    private const val BASE_URL = "https://api.openai.com/v1/"
-    private val token = "your_token"
+    private const val BASE_URL = "https://api.openai.com/"
+    private val token = "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"
 
-    private var client: OkHttpClient = OkHttpClient.Builder().addInterceptor { chain ->
-        val newRequest: Request =
-            chain.request().newBuilder().addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer $token").build()
-        chain.proceed(newRequest)
-    }.build()
-
-    @Provides
-    @Singleton
-    fun provideApiService(): ChatApiService = Retrofit.Builder().client(client).baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create()).build().create(ChatApiService::class.java)
-
-    @Provides
-    @Singleton
-    fun provideChatRepository(api: ChatApiService) : ChatRepository{
-        return ChatRepositoryImpl(api)
+    val logging = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
     }
+
+    val client = OkHttpClient.Builder()
+        .addInterceptor(logging)
+        .addInterceptor { chain ->
+            val newRequest: Request = chain.request().newBuilder()
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+            chain.proceed(newRequest)
+        }
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideApiService(): ChatApiService = Retrofit.Builder()
+        .client(client)
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(ChatApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(api: ChatApiService): ChatRepository = ChatRepositoryImpl(api)
 
 }
