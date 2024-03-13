@@ -28,7 +28,6 @@ class DALLERepositroyImpl   @Inject constructor(
     override suspend fun editImage(
         image: File,
         n: Int,
-        prompt: String,
         size: String
     ): Response<GeneratedImage> {
         // Convert the original image file to PNG format
@@ -40,11 +39,10 @@ class DALLERepositroyImpl   @Inject constructor(
 
         // Convert other parameters to RequestBody as before
         val requestBodyN = n.toString().toRequestBody("text/plain".toMediaTypeOrNull())
-        val requestBodyPrompt = prompt.toRequestBody("text/plain".toMediaTypeOrNull())
         val requestBodySize = size.toRequestBody("text/plain".toMediaTypeOrNull())
 
         // Call the API with the modified parameters
-        return api.editImage(body, requestBodyN, requestBodyPrompt, requestBodySize)
+        return api.editImage(body, requestBodyN, requestBodySize)
     }
 
     private fun convertImageToPng(originalImageFile: File): File {

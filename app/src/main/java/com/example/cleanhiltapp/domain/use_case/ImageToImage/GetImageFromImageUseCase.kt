@@ -30,7 +30,7 @@ class GetImageFromImageUseCase @Inject constructor(
     ): Flow<Resource<Response<GeneratedImage>>> = flow {
         try {
             emit(Resource.Loading())
-            val response = repository.editImage(image,n,prompt,size)
+            val response = repository.editImage(image,n,size)
             emit(Resource.Success(response))
         } catch (e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred."))

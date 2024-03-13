@@ -15,11 +15,10 @@ interface DALLEApi {
     suspend fun getPrompt(@Body body: DALLERequestBody) : GeneratedImage
 
     @Multipart
-    @POST("v1/images/edits")
+    @POST("v1/images/variations")
     suspend fun editImage(
         @Part image: MultipartBody.Part,
         @Part("n") n: RequestBody,
-        @Part("prompt") prompt: RequestBody,
         @Part("size") size: RequestBody
     ): Response<GeneratedImage>
 

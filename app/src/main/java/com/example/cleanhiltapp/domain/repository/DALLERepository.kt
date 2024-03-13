@@ -15,7 +15,6 @@ interface DALLERepository {
     suspend fun editImage(
         @Part image: File,
         @Part("n") n: Int,
-        @Part("prompt") prompt: String,
         @Part("size") size: String
     ): Response<GeneratedImage>
 }
