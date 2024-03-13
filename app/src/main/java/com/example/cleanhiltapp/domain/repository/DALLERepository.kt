@@ -13,7 +13,7 @@ import java.io.File
 interface DALLERepository {
     suspend fun getPrompt(message: DALLERequestBody): GeneratedImage
     suspend fun editImage(
-        @Part image: MultipartBody.Part,
+        @Part image: File,
         @Part("n") n: Int,
         @Part("prompt") prompt: String,
         @Part("size") size: String

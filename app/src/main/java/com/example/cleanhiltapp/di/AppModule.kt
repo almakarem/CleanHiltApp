@@ -57,7 +57,7 @@ object AppModule {
         .addInterceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", "Bearer $token")
+                .addHeader("Authorization", "Bearer ${Constants.ChatGPT_Token}")
                 .build()
             chain.proceed(newRequest)
         }

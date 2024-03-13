@@ -1,7 +1,6 @@
 package com.example.cleanhiltapp.data.remote
 
 import com.example.cleanhiltapp.data.remote.data_transfer_object.GeneratedImage
-import com.example.cleanhiltapp.domain.model.DALLEImageRequestBody
 import com.example.cleanhiltapp.domain.model.DALLERequestBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,9 +18,9 @@ interface DALLEApi {
     @POST("v1/images/edits")
     suspend fun editImage(
         @Part image: MultipartBody.Part,
-        @Part("n") n: Int,
-        @Part("prompt") prompt: String,
-        @Part("size") size: String
+        @Part("n") n: RequestBody,
+        @Part("prompt") prompt: RequestBody,
+        @Part("size") size: RequestBody
     ): Response<GeneratedImage>
 
 

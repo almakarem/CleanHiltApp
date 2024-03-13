@@ -55,7 +55,7 @@ class ToImageViewModel @Inject constructor(
         }
     }
 
-    fun editImage(image: MultipartBody.Part,
+    fun editImage(image: File,
                   n: Int,
                   prompt: String,
                   size: String

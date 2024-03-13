@@ -23,7 +23,7 @@ class GetImageFromImageUseCase @Inject constructor(
 ) {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     operator fun invoke(
-        image: MultipartBody.Part,
+        image: File,
         n: Int,
         prompt: String,
         size: String

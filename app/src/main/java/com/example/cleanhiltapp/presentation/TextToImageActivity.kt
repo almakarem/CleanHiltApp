@@ -88,7 +88,8 @@ class TextToImageActivity : AppCompatActivity() {
 
                         try {
                             viewModel.editImage(
-                                MultipartBody.Part.createFormData("image", file.name, imageRequestBody),
+//                                MultipartBody.Part.createFormData("image", file.name, imageRequestBody),
+                                file,
                                 1,
                                 userMessage.content,
                                 "1024x1024".trim()
@@ -148,6 +149,38 @@ class TextToImageActivity : AppCompatActivity() {
                             binding.idEdtQuery.setText("")
                         } else {
                             binding.idTVResponse.text = "No response received."
+                        }
+                    }
+                    is Resource.Error -> {
+                        // Show error message
+                        Toast.makeText(this@TextToImageActivity, resource.message ?: "An error occurred", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.chatImageResponse.collect { resource ->
+                when (resource) {
+                    is Resource.Loading -> {
+                        // Show loading indicator
+                        binding.idTVResponse.text = "Loading..."
+                    }
+                    is Resource.Success -> {
+                        // Check if the response is successful and has body
+                        if (resource.data!!.isSuccessful && resource.data.body() != null) {
+                            val responseBody = resource.data.body()!!
+                            if (responseBody.data.isNotEmpty()) {
+                                println(responseBody.data[0].url)
+                                println(responseBody.data[0].revised_prompt)
+                                binding.responseImage.load(responseBody.data[0].url)
+                                binding.idTVResponse.text = responseBody.data[0].revised_prompt
+                                binding.idEdtQuery.text!!.clear()
+                            } else {
+                                binding.idTVResponse.text = "No response received."
+                            }
+                        } else {
+                            // Handle the case where the response is not successful
+                            binding.idTVResponse.text = "Request failed: ${resource.data.code()} ${resource.data.message()}"
                         }
                     }
                     is Resource.Error -> {
