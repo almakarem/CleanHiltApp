@@ -1,5 +1,6 @@
 package com.example.cleanhiltapp.presentation
 
+import android.content.Intent
 import android.net.http.HttpException
 import android.os.Build
 import android.os.Bundle
@@ -20,10 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.example.cleanhiltapp.R
 import com.example.cleanhiltapp.common.Resource
 import com.example.cleanhiltapp.databinding.ActivityMainBinding
 import com.example.cleanhiltapp.domain.model.ChatRequestBody
+import com.example.cleanhiltapp.domain.model.DALLERequestBody
 import com.example.cleanhiltapp.domain.model.Message
 import com.example.cleanhiltapp.presentation.ChatGPTResponse.ChatGPTViewModel
 import com.example.cleanhiltapp.presentation.ui.theme.CleanHiltAppTheme
@@ -52,15 +55,16 @@ class MainActivity : ComponentActivity() {
                     // Create a message to send
                     val userMessage = Message("user", queryText)
                     // Prepare the request body with the model, messages, and any other parameters
-                    val requestBody = ChatRequestBody(
-                        model = "gpt-3.5-turbo",
-                        messages = listOf(userMessage),
-                        temperature = 0.7f,
-                        max_tokens = 100,
-                        top_p = 1.0f,
-                        frequency_penalty = 0.0f,
-                        presence_penalty = 0.0f
-                    )
+                        val requestBody = ChatRequestBody(
+                            model = "gpt-3.5-turbo",
+                            messages = listOf(userMessage),
+                            temperature = 0.7f,
+                            max_tokens = 100,
+                            top_p = 1.0f,
+                            frequency_penalty = 0.0f,
+                            presence_penalty = 0.0f
+                        )
+
 
                     try {
                         viewModel.sendMessage(requestBody)
@@ -80,28 +84,6 @@ class MainActivity : ComponentActivity() {
             false
         })
 
-//        lifecycleScope.launchWhenStarted {
-//            viewModel.chatResponse.collect { resource ->
-//                when (resource) {
-//                    is Resource.Loading -> {
-//                        // Show loading indicator
-//                    }
-//                    is Resource.Success -> {
-//                        // Update UI with the successful response
-//                        val data = resource.data
-//                        if (data !== null){
-//                            binding.idTVResponse.text = binding.idEdtQuery.text.toString() + data.response.get(0).toString()
-//                        }
-//                        else
-//                            binding.idTVResponse.text = binding.idEdtQuery.text.toString()
-//                    }
-//                    is Resource.Error -> {
-//                        // Show error message
-//                        Toast.makeText(this@MainActivity, resource.message, Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//        }
         lifecycleScope.launchWhenStarted {
             viewModel.chatResponse.collect { resource ->
                 when (resource) {
@@ -131,7 +113,39 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        binding.ImageActivity.setOnClickListener {
+            startActivity(Intent(this,TextToImageActivity::class.java))
+        }
+
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.chatResponse.collect { resource ->
+//                when (resource) {
+//                    is Resource.Loading -> {
+//                        // Show loading indicator
+//                        binding.idTVResponse.text = "Loading..."
+//                    }
+//                    is Resource.Success -> {
+//                        // Update UI with the successful response
+//                        val data = resource.data
+//                        if (data != null && data.data.isNotEmpty()) {
+//                            println(data.data[0].url)
+//                            println(data.data[0].revised_prompt)
+//                            binding.imageView.load(data.data[0].url)
+//                            binding.idTVResponse.setText(data.data[0].revised_prompt)
+//                            binding.idEdtQuery.setText("")
+//                        } else {
+//                            binding.idTVResponse.text = "No response received."
+//                        }
+//                    }
+//                    is Resource.Error -> {
+//                        // Show error message
+//                        Toast.makeText(this@MainActivity, resource.message ?: "An error occurred", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
 
-    }
+}

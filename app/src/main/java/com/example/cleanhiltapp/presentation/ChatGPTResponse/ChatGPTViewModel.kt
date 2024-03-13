@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cleanhiltapp.common.Resource
 import com.example.cleanhiltapp.data.remote.data_transfer_object.GeneratedAnswerDto
+import com.example.cleanhiltapp.data.remote.data_transfer_object.GeneratedImage
 import com.example.cleanhiltapp.domain.model.ChatRequestBody
+import com.example.cleanhiltapp.domain.model.DALLERequestBody
 import com.example.cleanhiltapp.domain.model.GeneratedAnswer
 import com.example.cleanhiltapp.domain.use_case.get_response.GetChatResponseUseCase
 import com.example.cleanhiltapp.presentation.ChatGPTResponse.components.ResponseState

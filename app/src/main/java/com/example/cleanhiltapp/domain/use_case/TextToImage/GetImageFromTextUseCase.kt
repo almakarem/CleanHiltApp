@@ -1,4 +1,4 @@
-package com.example.cleanhiltapp.domain.use_case.get_response
+package com.example.cleanhiltapp.domain.use_case.TextToImage
 
 import android.net.http.HttpException
 import android.os.Build
@@ -15,17 +15,18 @@ import com.example.cleanhiltapp.domain.model.DALLERequestBody
 import com.example.cleanhiltapp.domain.model.GeneratedAnswer
 import com.example.cleanhiltapp.domain.repository.ChatRepository
 import com.example.cleanhiltapp.domain.repository.CoinRepository
+import com.example.cleanhiltapp.domain.repository.DALLERepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.RequestBody
 import java.io.IOException
 import javax.inject.Inject
 
-class GetChatResponseUseCase @Inject constructor(
-    private val repository: ChatRepository
+class GetImageFromTextUseCase @Inject constructor(
+    private val repository: DALLERepository
 ) {
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-    operator fun invoke(body: ChatRequestBody): Flow<Resource<GeneratedAnswerDto>> = flow {
+    operator fun invoke(body: DALLERequestBody): Flow<Resource<GeneratedImage>> = flow {
         try {
             emit(Resource.Loading())
             val response = repository.getPrompt(body)

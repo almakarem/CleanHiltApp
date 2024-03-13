@@ -101,6 +101,11 @@ dependencies {
 // Additional Hilt compiler for Jetpack
     kapt("androidx.hilt:hilt-compiler:1.2.0")
 
+    //coil
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
+
 
 
 

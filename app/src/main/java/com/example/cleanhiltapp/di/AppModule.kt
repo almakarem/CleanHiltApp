@@ -3,10 +3,13 @@ package com.example.cleanhiltapp.di
 import com.example.cleanhiltapp.common.Constants
 import com.example.cleanhiltapp.data.remote.ChatApiService
 import com.example.cleanhiltapp.data.remote.CoinPaprikaApi
+import com.example.cleanhiltapp.data.remote.DALLEApi
 import com.example.cleanhiltapp.data.repository.ChatRepositoryImpl
 import com.example.cleanhiltapp.data.repository.CoinRepositoryImpl
+import com.example.cleanhiltapp.data.repository.DALLERepositroyImpl
 import com.example.cleanhiltapp.domain.repository.ChatRepository
 import com.example.cleanhiltapp.domain.repository.CoinRepository
+import com.example.cleanhiltapp.domain.repository.DALLERepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +19,7 @@ import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -39,13 +43,16 @@ object AppModule {
     }
 
     private const val BASE_URL = "https://api.openai.com/"
-    private val token = "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"
+    private val token = "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"
 
     val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
     val client = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS) // Increase connection timeout
+        .writeTimeout(30, TimeUnit.SECONDS) // Increase writing timeout
+        .readTimeout(30, TimeUnit.SECONDS) // Increase reading timeout
         .addInterceptor(logging)
         .addInterceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()
@@ -68,5 +75,18 @@ object AppModule {
     @Provides
     @Singleton
     fun provideChatRepository(api: ChatApiService): ChatRepository = ChatRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideDALLEApi(): DALLEApi = Retrofit.Builder()
+        .client(client)
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(DALLEApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideDALLERepository(api: DALLEApi): DALLERepository = DALLERepositroyImpl(api)
 
 }

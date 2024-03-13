@@ -23,6 +23,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+            <Button
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Generate Image"
+                android:id="@+id/ImageActivity"/>
 
             <!-- text view for displaying question-->
             <TextView
@@ -45,6 +51,10 @@
                 android:text="Response"
                 android:textColor="@color/white"
                 android:textSize="15sp" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </ScrollView>
